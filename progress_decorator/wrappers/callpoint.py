@@ -72,8 +72,11 @@ class CallPoint:
 
     def offset(self) -> Text:
         text = Text()
+        if self.depth == 0:
+            return text
+
         depths_to_mark = self._depths_to_mark()
-        for depth in range(self.depth)[: self.depth]:
+        for depth in range(self.depth)[1:]:
             if depths_to_mark[depth]:
                 text.append(" │")
             else:
