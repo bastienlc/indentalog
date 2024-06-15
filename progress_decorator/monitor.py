@@ -29,15 +29,19 @@ class Monitor:
     def __call__(
         self,
         arg1: Optional[Iterable] = None,
-        leave: Optional[bool] = None,
+        leave: bool = True,
         name: Optional[str] = None,
     ) -> Callable[[Callable], Callable]:
         if arg1 is None:
-            endpoint = FunctionEndPoint(self.call_stack, leave, name)
+            endpoint = FunctionEndPoint(
+                global_call_stack=self.call_stack, leave=leave, name=name
+            )
             return endpoint
 
         elif isinstance(arg1, Iterable):
-            endpoint = IterableEndPoint(self.call_stack, arg1, leave, name)
+            endpoint = IterableEndPoint(
+                iterable=arg1, global_call_stack=self.call_stack, leave=leave, name=name
+            )
             return endpoint
 
         else:

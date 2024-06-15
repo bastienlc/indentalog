@@ -1,4 +1,4 @@
-from typing import Iterable, List, Optional
+from typing import Iterable
 
 from rich.progress import Progress
 from rich.spinner import Spinner
@@ -9,11 +9,8 @@ from progress_decorator.wrappers import CallPoint, EndPoint
 
 
 class IterableCallPoint(CallPoint):
-    def __init__(
-        self, global_call_stack: List[CallPoint], leave: bool, name: str, total: int
-    ) -> None:
-        super().__init__(global_call_stack, leave)
-        self.name = name
+    def __init__(self, total: int, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
         self.total = total
         self.progress = Progress()
         self.task_id = self.progress.add_task("", total=total)
@@ -59,18 +56,21 @@ class IterableCallPoint(CallPoint):
 class IterableEndPoint(EndPoint):
     def __init__(
         self,
-        global_call_stack: List[CallPoint],
         iterable: Iterable,
-        leave: Optional[bool] = None,
-        name: Optional[str] = None,
+        *args,
+        **kwargs,
     ) -> None:
-        super().__init__(global_call_stack, leave)
+        super().__init__(*args, **kwargs)
         self.iterable = iterable
-        self.name = name or ""
+        if self.name is None:
+            self.name = ""
 
     def __iter__(self):
         call_point = IterableCallPoint(
-            self.global_call_stack, self.should_leave(), self.name, len(self.iterable)
+            total=len(self.iterable),
+            global_call_stack=self.global_call_stack,
+            leave=self.leave,
+            name=self.name,
         )
         for item in self.iterable:
             yield item

@@ -1,5 +1,5 @@
 import functools
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable
 
 from rich.spinner import Spinner
 from rich.table import Table
@@ -8,11 +8,8 @@ from progress_decorator.wrappers import CallPoint, EndPoint
 
 
 class FunctionCallPoint(CallPoint):
-    def __init__(
-        self, global_call_stack: List[CallPoint], leave: bool, name: str
-    ) -> None:
-        super().__init__(global_call_stack, leave)
-        self.name = name
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
         self.spinner = Spinner("dots", text=self.name)
 
     def render(self) -> Spinner:
@@ -29,14 +26,8 @@ class FunctionCallPoint(CallPoint):
 
 
 class FunctionEndPoint(EndPoint):
-    def __init__(
-        self,
-        global_call_stack: List[CallPoint],
-        leave: Optional[bool] = None,
-        name: Optional[str] = None,
-    ) -> None:
-        super().__init__(global_call_stack, leave)
-        self.name = name
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
 
     def __call__(self, func: Callable) -> Callable:
         if self.name is None:
@@ -46,9 +37,9 @@ class FunctionEndPoint(EndPoint):
         def wrap(*args, **kwargs) -> Any:
             # Create a new call point
             call_point = FunctionCallPoint(
-                self.global_call_stack,
-                self.should_leave(),
-                self.name,
+                global_call_stack=self.global_call_stack,
+                leave=self.leave,
+                name=self.name,
             )
             # Call the function
             output = func(*args, **kwargs)

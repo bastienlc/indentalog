@@ -1,4 +1,4 @@
-from typing import List, Self
+from typing import List, Optional, Self
 
 from rich.console import RenderableType
 from rich.text import Text
@@ -7,22 +7,26 @@ from rich.text import Text
 class CallPoint:
     """A callpoint is a point in the call stack where we want to monitor the progress of a function or an iterable. It is created by an endpoint."""
 
-    def __init__(self, global_call_stack: List[Self], leave: bool) -> None:
+    def __init__(
+        self, global_call_stack: List[Self], leave: bool, name: Optional[str] = None
+    ) -> None:
         self.global_call_stack = global_call_stack
-        self.finished = False
         self.leave = leave
+        self.name = name
+
         self.start()
-        self.depth = self._compute_depth()
 
     def render(self) -> RenderableType:
         pass
 
     def start(self) -> None:
+        self.finished = False
         self.global_call_stack.append(self)
+        self.depth = self._compute_depth()
 
     def stop(self) -> None:
         self.finished = True
-        if not self.leave:
+        if not self._should_leave():
             self.global_call_stack.remove(self)
 
     def _compute_depth(self) -> int:
@@ -35,7 +39,21 @@ class CallPoint:
 
         raise ValueError("Expected to find the current call point in the stack.")
 
-    def depths_to_mark(self) -> bool:
+    def _should_leave(self) -> bool:
+        # If the parent call point is not left, its children should not be left either.
+        # We only need to check the previous call point because:
+        # 1. Either it is the parent call point, in which case we can check if has leave=True
+        # 2. Or it is a sibling call point that has been left, which means that the parent
+        #    call point has leave=True
+        if len(self.global_call_stack) > 1:
+            previous_call_point = self.global_call_stack[
+                self.global_call_stack.index(self) - 1
+            ]
+            return self.leave and previous_call_point.leave
+        else:
+            return self.leave
+
+    def _depths_to_mark(self) -> bool:
         visits = [0] * (self.depth + 1)
         broken_flow = False
         for call_point in self.global_call_stack[
@@ -54,7 +72,7 @@ class CallPoint:
 
     def offset(self) -> Text:
         text = Text()
-        depths_to_mark = self.depths_to_mark()
+        depths_to_mark = self._depths_to_mark()
         for depth in range(self.depth)[: self.depth]:
             if depths_to_mark[depth]:
                 text.append(" │")
