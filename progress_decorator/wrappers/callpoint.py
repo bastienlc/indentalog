@@ -85,7 +85,7 @@ class CallPoint:
     def offset(self) -> Text:
         text = Text()
         if self.depth == 0:
-            return text
+            return text  # We don't want to add any offset for the root call point. However, don't add an empty offset in a rich table as it will still take up horizontal space.
 
         depths_to_mark = self._depths_to_mark()
         for depth in range(self.depth)[1:]:

@@ -18,28 +18,23 @@ class IterableCallPoint(CallPoint):
 
     def render(self) -> Progress:
         self.progress.update(self.task_id)
-        text = Text()
         grid = Table.grid()
-        grid.add_column(justify="left")
-        grid.add_column(justify="left")
-        grid.add_column(justify="left")
 
+        # Create the elements in the correct order
+        elements = []
+        if self.depth > 0:
+            elements.append(self.offset())
         if self.finished:
-            text.append(f"✔ {self.name}", style="green")
-            grid.add_row(
-                self.offset(),
-                text,
-                self.progress,
-            )
+            elements.append(Text(f"✔ {self.name}", style="green"))
         else:
-            text.append(f" {self.name}")
+            elements.append(self.spinner)
+            elements.append(Text(f" {self.name}"))
+        elements.append(self.progress)
+
+        # Add the elements to the grid
+        for _ in elements:
             grid.add_column(justify="left")
-            grid.add_row(
-                self.offset(),
-                self.spinner,
-                text,
-                self.progress,
-            )
+        grid.add_row(*elements)
 
         return grid
 

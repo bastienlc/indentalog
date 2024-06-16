@@ -18,6 +18,8 @@ class FunctionCallPoint(CallPoint):
             text = self.offset()
             text.append(f"✔ {self.name}", style="green")
             return text
+        elif self.depth == 0:
+            return self.spinner
         else:
             grid = Table.grid()
             grid.add_column(justify="left")
