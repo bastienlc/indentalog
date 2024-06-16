@@ -1,6 +1,6 @@
-from typing import List, Optional
+from typing import Optional
 
-from progress_decorator.wrappers import CallPoint
+from progress_decorator.wrappers import PartialMonitor
 
 
 class EndPoint:
@@ -8,10 +8,10 @@ class EndPoint:
 
     def __init__(
         self,
-        global_call_stack: List[CallPoint],
+        monitor: PartialMonitor,
         leave: bool,
         name: Optional[str] = None,
     ) -> None:
-        self.global_call_stack = global_call_stack
+        self.monitor = monitor
         self.leave = leave
         self.name = name

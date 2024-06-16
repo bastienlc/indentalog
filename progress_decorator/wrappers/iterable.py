@@ -45,8 +45,8 @@ class IterableCallPoint(CallPoint):
 
     def clear_call_stack(self) -> None:
         if not self.progress.finished:
-            while self.global_call_stack[-1] != self:
-                self.global_call_stack.pop()
+            while self.monitor.call_stack[-1] != self:
+                self.monitor.call_stack.pop()
 
     def advance(self) -> None:
         self.progress.advance(self.task_id)
@@ -68,7 +68,7 @@ class IterableEndPoint(EndPoint):
     def __iter__(self):
         call_point = IterableCallPoint(
             total=len(self.iterable),
-            global_call_stack=self.global_call_stack,
+            monitor=self.monitor,
             leave=self.leave,
             name=self.name,
         )

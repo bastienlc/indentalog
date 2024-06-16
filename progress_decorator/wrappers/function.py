@@ -1,6 +1,7 @@
 import functools
 from typing import Any, Callable
 
+from rich.console import RenderableType
 from rich.spinner import Spinner
 from rich.table import Table
 
@@ -12,7 +13,7 @@ class FunctionCallPoint(CallPoint):
         super().__init__(*args, **kwargs)
         self.spinner = Spinner("dots", text=self.name)
 
-    def render(self) -> Spinner:
+    def render(self) -> RenderableType:
         if self.finished:
             text = self.offset()
             text.append(f"✔ {self.name}", style="green")
@@ -37,7 +38,7 @@ class FunctionEndPoint(EndPoint):
         def wrap(*args, **kwargs) -> Any:
             # Create a new call point
             call_point = FunctionCallPoint(
-                global_call_stack=self.global_call_stack,
+                monitor=self.monitor,
                 leave=self.leave,
                 name=self.name,
             )

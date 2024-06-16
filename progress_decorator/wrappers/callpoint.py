@@ -1,16 +1,26 @@
-from typing import List, Optional, Self
+from typing import List, Optional
 
 from rich.console import RenderableType
 from rich.text import Text
+
+
+class PartialMonitor:
+    call_stack: List["CallPoint"] = []
+
+    def handle_start_live(self) -> None:
+        pass
+
+    def handle_stop_live(self) -> None:
+        pass
 
 
 class CallPoint:
     """A callpoint is a point in the call stack where we want to monitor the progress of a function or an iterable. It is created by an endpoint."""
 
     def __init__(
-        self, global_call_stack: List[Self], leave: bool, name: Optional[str] = None
+        self, monitor: PartialMonitor, leave: bool, name: Optional[str] = None
     ) -> None:
-        self.global_call_stack = global_call_stack
+        self.monitor = monitor
         self.leave = leave
         self.name = name
 
@@ -21,17 +31,19 @@ class CallPoint:
 
     def start(self) -> None:
         self.finished = False
-        self.global_call_stack.append(self)
+        self.monitor.call_stack.append(self)
         self.depth = self._compute_depth()
+        self.monitor.handle_start_live()
 
     def stop(self) -> None:
         self.finished = True
         if not self._should_leave():
-            self.global_call_stack.remove(self)
+            self.monitor.call_stack.remove(self)
+        self.monitor.handle_stop_live()
 
     def _compute_depth(self) -> int:
         depth = 0
-        for call_point in self.global_call_stack:
+        for call_point in self.monitor.call_stack:
             if call_point == self:
                 return depth
             elif not call_point.finished:
@@ -45,9 +57,9 @@ class CallPoint:
         # 1. Either it is the parent call point, in which case we can check if has leave=True
         # 2. Or it is a sibling call point that has been left, which means that the parent
         #    call point has leave=True
-        if len(self.global_call_stack) > 1:
-            previous_call_point = self.global_call_stack[
-                self.global_call_stack.index(self) - 1
+        if len(self.monitor.call_stack) > 1:
+            previous_call_point = self.monitor.call_stack[
+                self.monitor.call_stack.index(self) - 1
             ]
             return self.leave and previous_call_point.leave
         else:
@@ -56,8 +68,8 @@ class CallPoint:
     def _depths_to_mark(self) -> bool:
         visits = [0] * (self.depth + 1)
         broken_flow = False
-        for call_point in self.global_call_stack[
-            self.global_call_stack.index(self) + 1 :
+        for call_point in self.monitor.call_stack[
+            self.monitor.call_stack.index(self) + 1 :
         ]:
             if call_point.depth > self.depth:
                 continue
