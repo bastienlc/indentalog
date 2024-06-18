@@ -13,17 +13,23 @@ from progress_decorator.wrappers import (
 
 
 class Monitor(PartialMonitor):
-    call_stack: List[CallPoint] = []
-    console = Console()
+    auto_start = True
 
     def __init__(self) -> None:
         self.is_live = False
+        self.call_stack: List[CallPoint] = []
+        self.console = Console()
         self.live = Live(
             refresh_per_second=10,
             console=self.console,
             get_renderable=self.render,
         )
-        self.live.start()
+        if self.auto_start:
+            self.live.start()
+
+    def __del__(self):
+        # Stop live, especially useful for tests
+        self.live.stop()
 
     def handle_start_live(self) -> None:
         if not self.is_live:
@@ -68,6 +74,3 @@ class Monitor(PartialMonitor):
 
         else:
             raise ValueError(f"Invalid argument {arg1} for Monitor class.")
-
-
-monitor = Monitor()

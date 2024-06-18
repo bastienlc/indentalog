@@ -1,1 +1,3 @@
-from .monitor import monitor
+from .monitor import Monitor
+
+monitor = Monitor()
