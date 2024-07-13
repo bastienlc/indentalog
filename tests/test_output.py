@@ -68,3 +68,15 @@ def test_complex_loop(cleanup):
 
         main_function()
         check_monitor_output(monitor, "test_complex_loop")
+
+
+def test_names(cleanup):
+    with MonitorGetter() as monitor:
+
+        @monitor(name="function_1")
+        def function_1():
+            for _ in monitor(range(2), name="loop_1"):
+                pass
+
+        function_1()
+        check_monitor_output(monitor, "test_names")
