@@ -80,3 +80,25 @@ def test_names(cleanup):
 
         function_1()
         check_monitor_output(monitor, "test_names")
+
+
+def test_leave(cleanup):
+    with MonitorGetter() as monitor:
+
+        @monitor(leave=False)
+        def function_1():
+            return function_2()
+
+        @monitor()
+        def function_2():
+            return 0
+
+        @monitor()
+        def function_3():
+            for _ in monitor(range(2), leave=False):
+                pass
+
+        function_1()
+        function_2()
+        function_3()
+        check_monitor_output(monitor, "test_leave")
