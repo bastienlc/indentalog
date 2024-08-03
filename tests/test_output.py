@@ -102,3 +102,18 @@ def test_leave(cleanup):
         function_2()
         function_3()
         check_monitor_output(monitor, "test_leave")
+
+
+def test_context_manager(cleanup):
+    with MonitorGetter() as monitor:
+
+        @monitor()
+        def function_1():
+            return function_2()
+
+        def function_2():
+            with monitor():
+                return 0
+
+        function_1()
+        check_monitor_output(monitor, "test_context_manager")

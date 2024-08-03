@@ -6,7 +6,7 @@ from rich.text import Text
 
 from progress_decorator.wrappers import (
     CallPoint,
-    FunctionEndPoint,
+    DecoratorEndPoint,
     IterableEndPoint,
     PartialMonitor,
 )
@@ -63,7 +63,7 @@ class Monitor(PartialMonitor):
         name: Optional[str] = None,
     ) -> Callable[[Callable], Callable]:
         if arg1 is None:
-            endpoint = FunctionEndPoint(monitor=self, leave=leave, name=name)
+            endpoint = DecoratorEndPoint(monitor=self, leave=leave, name=name)
             return endpoint
 
         elif isinstance(arg1, Iterable):
