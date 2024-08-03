@@ -117,3 +117,21 @@ def test_context_manager(cleanup):
 
         function_1()
         check_monitor_output(monitor, "test_context_manager")
+
+
+def test_class_method(cleanup):
+    with MonitorGetter() as monitor:
+
+        class MyClass:
+            @monitor()
+            def my_method(self):
+                return 0
+
+        my_class = MyClass()
+
+        @monitor()
+        def function_1():
+            return my_class.my_method()
+
+        function_1()
+        check_monitor_output(monitor, "test_class_method")

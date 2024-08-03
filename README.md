@@ -33,8 +33,5 @@ my_second_function()
 
 
 ### Future features
-- [ ] Endpoint on a single function call (and not a decorator)
-- [ ] Support for class methods
-- [ ] Endpoint without anything else (i.e. no spinner)
 - [ ] Passing data to the endpoints
 - [ ] Support for custom styles or themes
