@@ -6,7 +6,8 @@ from rich.console import RenderableType
 from rich.spinner import Spinner
 from rich.table import Table
 
-from progress_decorator.wrappers import CallPoint, EndPoint
+from progress_decorator.wrappers.callpoint import CallPoint
+from progress_decorator.wrappers.endpoint import EndPoint
 
 
 class DecoratorCallPoint(CallPoint):

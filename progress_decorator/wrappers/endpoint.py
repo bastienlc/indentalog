@@ -1,6 +1,6 @@
 from typing import Optional
 
-from progress_decorator.wrappers import PartialMonitor
+from progress_decorator.wrappers.callpoint import PartialMonitor
 
 
 class EndPoint:
