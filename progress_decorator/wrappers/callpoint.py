@@ -93,13 +93,13 @@ class CallPoint:
         depths_to_mark = self._depths_to_mark()
         for depth in range(self.depth)[1:]:
             if depths_to_mark[depth]:
-                text.append(" │")
+                text.append("│" + " " * self.monitor.config.offset)
             else:
-                text.append("  ")
+                text.append(" " * (self.monitor.config.offset + 1))
 
         if depths_to_mark[self.depth]:
-            text.append(" ├")
+            text.append("├" + "─" * self.monitor.config.offset)
         else:
-            text.append(" └")
+            text.append("└" + "─" * self.monitor.config.offset)
 
         return text
