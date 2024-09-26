@@ -4,6 +4,7 @@ from rich.console import Console, group
 from rich.live import Live
 from rich.text import Text
 
+from progress_decorator.config import MonitorConfig
 from progress_decorator.wrappers import (
     CallPoint,
     DecoratorEndPoint,
@@ -16,6 +17,7 @@ class Monitor(PartialMonitor):
     auto_start = True
 
     def __init__(self) -> None:
+        self.config = MonitorConfig()
         self.is_live = False
         self.call_stack: List[CallPoint] = []
         self.console = Console()
@@ -30,6 +32,9 @@ class Monitor(PartialMonitor):
     def __del__(self):
         # Stop live, especially useful for tests
         self.live.stop()
+
+    def set_config(self, config: MonitorConfig) -> None:
+        self.config = config
 
     def handle_start_live(self) -> None:
         if not self.is_live:

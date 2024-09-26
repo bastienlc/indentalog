@@ -13,12 +13,15 @@ from progress_decorator.wrappers.endpoint import EndPoint
 class DecoratorCallPoint(CallPoint):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.spinner = Spinner("dots", text=self.name)
+        self.spinner = Spinner(self.monitor.config.spinner_type, text=self.name)
 
     def render(self) -> RenderableType:
         if self.finished:
             text = self.offset()
-            text.append(f"✔ {self.name}", style="green")
+            text.append(
+                f"{self.monitor.config.end_symbol} {self.name}",
+                style=self.monitor.config.end_color,
+            )
             return text
         elif self.depth == 0:
             return self.spinner
@@ -57,7 +60,7 @@ class DecoratorEndPoint(EndPoint):
 
     def __enter__(self):
         if self.name is None:
-            self.name = "Context manager"
+            self.name = self.monitor.config.context_manager_name
         self.call_point = DecoratorCallPoint(
             monitor=self.monitor,
             leave=self.leave,

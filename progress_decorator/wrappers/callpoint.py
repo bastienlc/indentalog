@@ -3,9 +3,12 @@ from typing import List, Optional
 from rich.console import RenderableType
 from rich.text import Text
 
+from progress_decorator.config import MonitorConfig
+
 
 class PartialMonitor:
     call_stack: List["CallPoint"] = []
+    config: MonitorConfig
 
     def handle_start_live(self) -> None:
         pass

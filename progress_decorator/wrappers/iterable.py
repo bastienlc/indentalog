@@ -15,7 +15,7 @@ class IterableCallPoint(CallPoint):
         self.total = total
         self.progress = Progress()
         self.task_id = self.progress.add_task("", total=total)
-        self.spinner = Spinner("dots")
+        self.spinner = Spinner(self.monitor.config.spinner_type)
 
     def render(self) -> Progress:
         self.progress.update(self.task_id)
@@ -26,7 +26,12 @@ class IterableCallPoint(CallPoint):
         if self.depth > 0:
             elements.append(self.offset())
         if self.finished:
-            elements.append(Text(f"✔ {self.name}", style="green"))
+            elements.append(
+                Text(
+                    f"{self.monitor.config.end_symbol} {self.name}",
+                    style=self.monitor.config.end_color,
+                )
+            )
         else:
             elements.append(self.spinner)
             elements.append(Text(f" {self.name}"))
