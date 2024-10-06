@@ -8,6 +8,7 @@ An easy-to-use progress bar decorator for Python functions and loops.
 
 ```bash
 git clone git@github.com:bastienlc/indentalog.git
+cd indentalog
 poetry install
 ```
 
