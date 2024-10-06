@@ -3,12 +3,12 @@ from typing import List, Optional
 from rich.console import RenderableType
 from rich.text import Text
 
-from progress_decorator.config import MonitorConfig
+from indentalog.config import IndentedLoggerConfig
 
 
-class PartialMonitor:
+class PartialIndentedLogger:
     call_stack: List["CallPoint"] = []
-    config: MonitorConfig
+    config: IndentedLoggerConfig
 
     def handle_start_live(self) -> None:
         pass
@@ -21,9 +21,9 @@ class CallPoint:
     """A callpoint is a point in the call stack where we want to monitor the progress of a function or an iterable. It is created by an endpoint."""
 
     def __init__(
-        self, monitor: PartialMonitor, leave: bool, name: Optional[str] = None
+        self, ilog: PartialIndentedLogger, leave: bool, name: Optional[str] = None
     ) -> None:
-        self.monitor = monitor
+        self.ilog = ilog
         self.leave = leave
         self.name = name
 
@@ -34,19 +34,19 @@ class CallPoint:
 
     def start(self) -> None:
         self.finished = False
-        self.monitor.call_stack.append(self)
+        self.ilog.call_stack.append(self)
         self.depth = self._compute_depth()
-        self.monitor.handle_start_live()
+        self.ilog.handle_start_live()
 
     def stop(self) -> None:
         self.finished = True
         if not self._should_leave():
-            self.monitor.call_stack.remove(self)
-        self.monitor.handle_stop_live()
+            self.ilog.call_stack.remove(self)
+        self.ilog.handle_stop_live()
 
     def _compute_depth(self) -> int:
         depth = 0
-        for call_point in self.monitor.call_stack:
+        for call_point in self.ilog.call_stack:
             if call_point == self:
                 return depth
             elif not call_point.finished:
@@ -60,9 +60,9 @@ class CallPoint:
         # 1. Either it is the parent call point, in which case we can check if has leave=True
         # 2. Or it is a sibling call point that has been left, which means that the parent
         #    call point has leave=True
-        if len(self.monitor.call_stack) > 1:
-            previous_call_point = self.monitor.call_stack[
-                self.monitor.call_stack.index(self) - 1
+        if len(self.ilog.call_stack) > 1:
+            previous_call_point = self.ilog.call_stack[
+                self.ilog.call_stack.index(self) - 1
             ]
             return self.leave and previous_call_point.leave
         else:
@@ -71,9 +71,7 @@ class CallPoint:
     def _depths_to_mark(self) -> bool:
         visits = [0] * (self.depth + 1)
         broken_flow = False
-        for call_point in self.monitor.call_stack[
-            self.monitor.call_stack.index(self) + 1 :
-        ]:
+        for call_point in self.ilog.call_stack[self.ilog.call_stack.index(self) + 1 :]:
             if call_point.depth > self.depth:
                 continue
             elif call_point.depth == self.depth:
@@ -93,13 +91,13 @@ class CallPoint:
         depths_to_mark = self._depths_to_mark()
         for depth in range(self.depth)[1:]:
             if depths_to_mark[depth]:
-                text.append("│" + " " * self.monitor.config.offset)
+                text.append("│" + " " * self.ilog.config.offset)
             else:
-                text.append(" " * (self.monitor.config.offset + 1))
+                text.append(" " * (self.ilog.config.offset + 1))
 
         if depths_to_mark[self.depth]:
-            text.append("├" + "─" * self.monitor.config.offset)
+            text.append("├" + "─" * self.ilog.config.offset)
         else:
-            text.append("└" + "─" * self.monitor.config.offset)
+            text.append("└" + "─" * self.ilog.config.offset)
 
         return text

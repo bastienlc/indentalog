@@ -1,6 +1,6 @@
 from typing import Optional
 
-from progress_decorator.wrappers.callpoint import PartialMonitor
+from indentalog.wrappers.callpoint import PartialIndentedLogger
 
 
 class EndPoint:
@@ -8,10 +8,10 @@ class EndPoint:
 
     def __init__(
         self,
-        monitor: PartialMonitor,
+        ilog: PartialIndentedLogger,
         leave: bool,
         name: Optional[str] = None,
     ) -> None:
-        self.monitor = monitor
+        self.ilog = ilog
         self.leave = leave
         self.name = name

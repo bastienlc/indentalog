@@ -4,20 +4,20 @@ from rich.console import Console, group
 from rich.live import Live
 from rich.text import Text
 
-from progress_decorator.config import MonitorConfig
-from progress_decorator.wrappers import (
+from indentalog.config import IndentedLoggerConfig
+from indentalog.wrappers import (
     CallPoint,
     DecoratorEndPoint,
     IterableEndPoint,
-    PartialMonitor,
+    PartialIndentedLogger,
 )
 
 
-class Monitor(PartialMonitor):
+class IndentedLogger(PartialIndentedLogger):
     auto_start = True
 
     def __init__(self) -> None:
-        self.config = MonitorConfig()
+        self.config = IndentedLoggerConfig()
         self.is_live = False
         self.call_stack: List[CallPoint] = []
         self.console = Console()
@@ -33,7 +33,7 @@ class Monitor(PartialMonitor):
         # Stop live, especially useful for tests
         self.live.stop()
 
-    def set_config(self, config: MonitorConfig) -> None:
+    def set_config(self, config: IndentedLoggerConfig) -> None:
         self.config = config
 
     def handle_start_live(self) -> None:
@@ -68,14 +68,14 @@ class Monitor(PartialMonitor):
         name: Optional[str] = None,
     ) -> Callable[[Callable], Callable]:
         if arg1 is None:
-            endpoint = DecoratorEndPoint(monitor=self, leave=leave, name=name)
+            endpoint = DecoratorEndPoint(ilog=self, leave=leave, name=name)
             return endpoint
 
         elif isinstance(arg1, Iterable):
             endpoint = IterableEndPoint(
-                iterable=arg1, monitor=self, leave=leave, name=name
+                iterable=arg1, ilog=self, leave=leave, name=name
             )
             return endpoint
 
         else:
-            raise ValueError(f"Invalid argument {arg1} for Monitor class.")
+            raise ValueError(f"Invalid argument {arg1} for IndentedLogger class.")

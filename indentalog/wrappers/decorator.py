@@ -6,21 +6,21 @@ from rich.console import RenderableType
 from rich.spinner import Spinner
 from rich.table import Table
 
-from progress_decorator.wrappers.callpoint import CallPoint
-from progress_decorator.wrappers.endpoint import EndPoint
+from indentalog.wrappers.callpoint import CallPoint
+from indentalog.wrappers.endpoint import EndPoint
 
 
 class DecoratorCallPoint(CallPoint):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.spinner = Spinner(self.monitor.config.spinner_type, text=self.name)
+        self.spinner = Spinner(self.ilog.config.spinner_type, text=self.name)
 
     def render(self) -> RenderableType:
         if self.finished:
             text = self.offset()
             text.append(
-                f"{self.monitor.config.end_symbol} {self.name}",
-                style=self.monitor.config.end_color,
+                f"{self.ilog.config.end_symbol} {self.name}",
+                style=self.ilog.config.end_color,
             )
             return text
         elif self.depth == 0:
@@ -45,7 +45,7 @@ class DecoratorEndPoint(EndPoint):
         def wrap(*args, **kwargs) -> Any:
             # Create a new call point
             call_point = DecoratorCallPoint(
-                monitor=self.monitor,
+                ilog=self.ilog,
                 leave=self.leave,
                 name=self.name,
             )
@@ -60,9 +60,9 @@ class DecoratorEndPoint(EndPoint):
 
     def __enter__(self):
         if self.name is None:
-            self.name = self.monitor.config.context_manager_name
+            self.name = self.ilog.config.context_manager_name
         self.call_point = DecoratorCallPoint(
-            monitor=self.monitor,
+            ilog=self.ilog,
             leave=self.leave,
             name=self.name,
         )

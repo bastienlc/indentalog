@@ -18,8 +18,8 @@ class COLORS:
 
 
 @dataclass
-class MonitorConfig:
-    """Configuration class for the Monitor. Mainly handle visual settings."""
+class IndentedLoggerConfig:
+    """Configuration class for the IndentedLogger. Mainly handle visual settings."""
 
     spinner_type: str = SPINNER_TYPES.DOTS
     end_color: str = COLORS.GREEN

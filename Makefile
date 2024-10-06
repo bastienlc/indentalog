@@ -13,8 +13,8 @@ test:
 	poetry run pytest
 
 lint:
-	poetry run black progress_decorator/
-	poetry run isort progress_decorator/
+	poetry run black indentalog/
+	poetry run isort indentalog/
 
 gifs:
 	bash assets/record.sh

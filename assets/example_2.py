@@ -1,9 +1,9 @@
 from time import sleep
 
-from progress_decorator import monitor
+from indentalog import ilog
 
 
-@monitor()
+@ilog()
 def my_inner_function():
     # Your code here
     sleep(0.5)
@@ -11,7 +11,7 @@ def my_inner_function():
 
 
 def my_main_function():
-    for i in monitor(range(3), name="Main function"):
+    for i in ilog(range(3), name="Main function"):
         # Your code here
         sleep(0.1)
         my_inner_function()
