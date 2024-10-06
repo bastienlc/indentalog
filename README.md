@@ -31,7 +31,7 @@ my_first_function()
 my_second_function()
 ```
 
-![GIF for the first example.](./assets/example_1.gif)
+![GIF for the first example.](https://raw.githubusercontent.com/bastienlc/indentalog/assets/example_1.gif)
 
 The main advantage of **indentalog** is that it keeps track of the call stack, which allows displaying the progress of nested functions or loops.
 
@@ -52,7 +52,7 @@ def my_main_function():
 my_main_function()
 ```
 
-![GIF for the first example.](./assets/example_2.gif)
+![GIF for the first example.](https://raw.githubusercontent.com/bastienlc/indentalog/assets/example_2.gif)
 
 
 ### Future features
