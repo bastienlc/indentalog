@@ -2,7 +2,6 @@
 
 An easy-to-use progress logger for Python. **indentalog** allows you to display the progress of your functions and loops in a clean and readable way, by keeping track of the call stack. It uses [rich](https://github.com/Textualize/rich) under the hood to provide a beautiful and customizable output.
 
-
 ## Getting Started
 
 **indentalog** is available on PyPI. It is still in early development, so you may encounter some bugs. If you do, please open an issue on github.
@@ -51,8 +50,46 @@ def my_main_function():
 my_main_function()
 ```
 
-![GIF for the first example.](https://raw.githubusercontent.com/bastienlc/indentalog/master/assets/example_2.gif)
+![GIF for the second example.](https://raw.githubusercontent.com/bastienlc/indentalog/master/assets/example_2.gif)
 
+The real magic happens in more complex cases, where the imperative use of `ilog` results in a clean and readable output.
+
+```python
+from indentalog import ilog
+
+@ilog(name="Training")
+def train():
+    for epoch in ilog(range(2), name="Epochs"):
+        for batch in ilog(range(5), name="Train batches"):
+            with ilog(name="Forward pass"):
+                # Your code here
+                pass
+                sleep(0.2)
+            with ilog(name="Backward pass"):
+                # Your code here
+                pass
+                sleep(0.2)
+            sleep(0.1)
+
+        for batch in ilog(range(5), name="Validation batches"):
+            with ilog(name="Forward pass"):
+                # Your code here
+                pass
+                sleep(0.2)
+            with ilog(name="Compute metrics"):
+                # Your code here
+                pass
+                sleep(0.2)
+            sleep(0.1)
+
+with ilog(name="Initializing model and data"):
+    # Your code here
+    pass
+
+train()
+```
+
+![GIF for the third example.](https://raw.githubusercontent.com/bastienlc/indentalog/master/assets/example_3.gif)
 
 ## Contributing
 
