@@ -91,6 +91,58 @@ train()
 
 ![GIF for the third example.](https://raw.githubusercontent.com/bastienlc/indentalog/master/assets/example_3.gif)
 
+## API Reference
+
+The `ilog` object can be imported directly from the `indentalog` module.
+
+```python
+from indentalog import ilog
+```
+
+Each of the **decorator**, **wrapper** and **context manager** modes take optional arguments:
+
+- `name`: the name of the block of code. This will be displayed in the progress logger.
+- `leave`: whether to leave the progress logger after the block of code is executed. Default is `True`.
+
+#### Decorator
+
+Using `ilog` as a decorator will log the execution of the decorated function.
+
+```python
+@ilog(name="My function")
+def my_function():
+    pass
+```
+
+#### Wrapper
+
+Using `ilog` as a wrapper will log the iteration of the wrapped object.
+
+```python
+for i in ilog(range(10), name="My loop"):
+    pass
+```
+
+#### Context manager
+
+Using `ilog` as a context manager will log the execution of the block of code.
+
+```python
+with ilog(name="My block"):
+    pass
+```
+
+### Features
+
+- **Stdout redirection**: the `stdout` stream is automatically redirected by `rich`, so you can use the `print` function as usual. The output of `print` will appear on top of the progress logger.
+
+- **Multi-file support**: the progress logger is shared across all the files of your project. This means that you can use `ilog` in any file and the output will be displayed in the same terminal.
+
+### Known limitations
+
+- Projects using `rich`'s `Live` object may not work as expected. This is because `rich` only supports one `Live` object at a time, and `indentalog` uses it.
+- `multiprocessing` and `threading` are not supported. This is because `indentalog` uses a global state to keep track of the call stack. You can still use `multiprocessing` and `threading`, but you can't log what's happening in the child processes or threads.
+
 ## Contributing
 
 Contributions are welcome! If you have any idea or suggestion, please open an issue on github. This project is still in early development, so there is a lot of room for improvement.
